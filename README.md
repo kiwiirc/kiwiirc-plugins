@@ -9,6 +9,8 @@ Place the plugins anywhere on your webserver. Add the URL to the plugin you want
 See here: https://github.com/kiwiirc/kiwiirc/wiki/Plugins
 
 #### Want to submit a plugin?
+An example on how to structure your plugin can be found here: https://github.com/kiwiirc/kiwiirc-plugins/tree/master/myplugin
+
 1. Create a folder with your plugin name and place your plugin files inside there.
 2. Create a readme.md file in your folder with a description of your plugin, explaining what it does and any extra steps needed to install it.
 3. Send a pull request with your new folder
