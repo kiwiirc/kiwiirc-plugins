@@ -1,5 +1,9 @@
 ## Example plugin structure
 
+* Your Name
+* your@email.com
+* https://github.com/prawnsalad
+
 ### Description
 The description for your plugin.
 
