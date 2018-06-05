@@ -23,7 +23,7 @@ var InvalidConfirmString = "^Codice di attivazione non valido";
 // Invalid Confirmation code text
 var InvalidConfirmText = "Codice di attivazione non valido. Inserisci il codice di conferma ricevuto per email per completare la registrazione dell\' account.";
 // A valid confirmation code has been entered
-var ValidConfirmString = "^Il tuo indirizzo email per (.*) è stato confermato."
+var ValidConfirmString = "^Il tuo indirizzo email per (.*) è stato confermato.";
 
 // Confirm Button text
 var ConfirmButton = "CONFERMA REGISTRAZIONE";
@@ -42,45 +42,66 @@ link.type = "text/css";
 link.rel = "stylesheet";
 link.href = "/plugins/nickserv.css";
 document.head.appendChild(link);
-    
-var nsdialog = kiwi.Vue.extend({
-
-    data: function data() {
-        return {
-        pwdInput: ''
-        }
-    },
-
-    methods: {
-      onIdentify: function () {
-        kiwi.state.$emit('input.raw', '/NS identify '+ this.pwdInput )
-        }
-    },
-    
-	template: '<div class="kiwi-default-simple-nick input-text input-text--focus input-text--reveal-value" id="nickserv-form" title="NickServ" style="text-align:center;"><p class="kiwi-default-simple-error kiwi-ns-error" id="validate">' + IDText + '</p><input class="kiwi-ns-input" placeholder="Inserisci la password" type="password" v-model="pwdInput"><div class="input-text-underline"><div class="input-text-underline-active"></div></div><button class="u-button u-button-primary u-submit kiwi-default-simple-start kiwi-ns-button" v-on:click="onIdentify" >' + IDButton + '</button></div>',
-});
-
-var confirmdialog = kiwi.Vue.extend({
-
-    data: function data() {
-        return {
-        codeInput: ''
-        }
-    },
-
-    methods: {
-      onIdentify: function () {
-        kiwi.state.$emit('input.raw', '/NS confirm '+ this.codeInput )
-        }
-    },
-    
-	template: '<div class="kiwi-default-simple-nick input-text input-text--focus input-text--reveal-value" id="nickserv-form" title="NickServ" style="text-align:center;"><p class="kiwi-default-simple-error kiwi-ns-error" id="validate">' + ConfirmReqText + '</p><input class="kiwi-ns-input" placeholder="Inserisci il codice di conferma" type="text" v-model="codeInput"><div class="input-text-underline"><div class="input-text-underline-active"></div></div><button class="u-button u-button-primary u-submit kiwi-default-simple-start kiwi-ns-button" v-on:click="onIdentify" >' + ConfirmButton + '</button></div>',
-});
 
 kiwi.plugin('nickserv', function(kiwi) {
+
+    var data = new kiwi.Vue({data: {themeName: ''}});
+    data.themeName = kiwi.themes.currentTheme().name.toLowerCase();
+
+    kiwi.on('theme.change', function(event) {
+        data.themeName = kiwi.themes.currentTheme().name.toLowerCase();
+        console.log(data.themeName);
+        
+    });
+
+    var nsdialog = kiwi.Vue.extend({
+    
+        data: function data() {
+            return {
+            pwdInput: ''
+            }
+        },
+    
+        computed: { 
+            themeName: function() { 
+                return data.themeName;
+            }
+        },
+    
+        methods: {
+          onIdentify: function () {  
+            kiwi.state.$emit('input.raw', '/NS identify '+ this.pwdInput )
+            }
+        },
+        
+    	template: '<div :class="[\'kiwi-\' + themeName + \'-simple-nick\', \'input-text\', \'input-text--focus\', \'input-text--reveal-value\']" id="nickserv-form" title="NickServ" style="text-align:center;"><p :class="[\'kiwi-\' + themeName + \'-simple-error\', \'kiwi-ns-error\']" id="validate">' + IDText + '</p><input class="kiwi-ns-input" placeholder="Inserisci la password" type="password" v-model="pwdInput"><div class="input-text-underline"><div class="input-text-underline-active"></div></div><button :class="[\'u-button\', \'u-button-primary\', \'u-submit\', \'kiwi-\' + themeName + \'-simple-start\', \'kiwi-ns-button\']" v-on:click="onIdentify" >' + IDButton + '</button></div>',
+    });
+    
+    var confirmdialog = kiwi.Vue.extend({
+    
+        data: function data() {
+            return {
+            codeInput: ''
+           }
+        },
+
+        computed: { 
+            themeName: function() { 
+                return data.themeName; 
+            }
+        },
+    
+        methods: {
+          onIdentify: function () {
+            kiwi.state.$emit('input.raw', '/NS confirm '+ this.codeInput )
+            }
+        },
+        
+    	template: '<div :class="[\'kiwi-\' + themeName + \'-simple-nick\', \'input-text\', \'input-text--focus\', \'input-text--reveal-value\']" id="nickserv-form" title="NickServ" style="text-align:center;"><p :class="[\'kiwi-\' + themeName + \'-simple-error\', \'kiwi-ns-error\']" id="validate">' + ConfirmReqText + '</p><input class="kiwi-ns-input" placeholder="Inserisci il codice di conferma" type="text" v-model="codeInput"><div class="input-text-underline"><div class="input-text-underline-active"></div></div><button :class="[\'u-button\', \'u-button-primary\', \'u-submit\', \'kiwi-\' + themeName + \'-simple-start\', \'kiwi-ns-button\']" v-on:click="onIdentify" >' + ConfirmButton + '</button></div>',
+    });
 	
 	kiwi.on('irc.notice', function(event) { 
-	console.log(event);
+    	
 	if ((event.nick == 'NickServ') && (event.message.match(IDRe))) { 
 			kiwi.state.$emit('mediaviewer.show', {component: nsdialog })
 		}
@@ -110,5 +131,9 @@ kiwi.plugin('nickserv', function(kiwi) {
 		}
 
 	 });
+	 
+	kiwi.on('input.command.nick', function(event) {
+        kiwi.state.$emit('mediaviewer.hide')	 
+    });
 
 });
