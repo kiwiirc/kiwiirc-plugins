@@ -1,0 +1,18 @@
+.kiwi-ns-error:before {
+    font-family:FontAwesome;
+    content: "\f071" ;
+    margin-right:5px;
+}
+.kiwi-ns-input { 
+    border-top:1px solid rgba(0, 0, 0, 0.2) !important;
+    padding:10px !important;
+}
+.kiwi-ns-button { 
+    font-size:1.2em;border-radius:0px;
+}
+
+.kiwi-ns-button:before { 
+    font-family:FontAwesome;
+    content: "\f023" ;
+    margin-right:5px;
+}    
