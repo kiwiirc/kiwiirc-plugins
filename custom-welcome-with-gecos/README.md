@@ -6,6 +6,7 @@ This plugin creates a customised startup screen with real name (gecos) entry.
 If network state is saved, nick and gecos fields will autofill with what the user previously used.
 
 PR's welcome to https://github.com/TheBeerbarian/kiwiirc-plugins.git
+Contact info: Cowan Bowman (cowan@beerbarian.com)
 
 
 #### Dependencies
