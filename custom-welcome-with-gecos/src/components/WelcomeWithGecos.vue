@@ -156,8 +156,22 @@ export default {
     },
     created: function created() {
         let options = state.settings.startupOptions;
+        let netAddress = _.trim(options.server);
 
-        this.nick = this.processNickRandomNumber(Misc.queryStringVal('nick') || this.nickText() || '');
+        // Check if we have this network already
+        let net = this.network || state.getNetworkFromAddress(netAddress);
+
+        // Existing Network. Return previously saved nick and gecos
+        // otherwise return client configuration or nothing.
+        if (net) {
+            this.nick = net.nick || options.nick;
+            this.gecos = net.gecos || options.gecos || '';
+        } else {
+            this.nick = options.nick;
+            this.gecos = options.gecos || '';
+        }
+
+        this.nick = this.processNickRandomNumber(Misc.queryStringVal('nick') || this.nick || '');
         this.password = options.password || '';
         this.channel = decodeURIComponent(window.location.hash) || options.channel || '';
         this.showChannel = typeof options.showChannel === 'boolean' ?
@@ -180,7 +194,6 @@ export default {
         this.connectWithoutChannel = !!options.allowNoChannel;
 
         this.recaptchaSiteId = options.recaptchaSiteId || '';
-        this.gecos = this.gecosText();
     },
     mounted() {
         if (this.recaptchaSiteId) {
@@ -292,36 +305,6 @@ export default {
             // Replace ? with a random number
             let tmp = (nick || '').replace(/\?/g, () => Math.floor(Math.random() * 100).toString());
             return _.trim(tmp);
-        },
-        gecosText: function gecosText() {
-            let options = state.settings.startupOptions;
-
-            let netAddress = _.trim(options.server);
-
-            // Check if we have this network already
-            let net = this.network || state.getNetworkFromAddress(netAddress);
-
-            // Existing Network. Return previously saved gecos
-            // otherwise return client configured gecos or nothing.
-            if (net) {
-                return net.gecos || options.gecos || '';
-            }
-            return options.gecos || '';
-        },
-        nickText: function nickText() {
-            let options = state.settings.startupOptions;
-
-            let netAddress = _.trim(options.server);
-
-            // Check if we have this network already
-            let net = this.network || state.getNetworkFromAddress(netAddress);
-
-            // Existing Network. Return previously saved gecos
-            // otherwise return client configured gecos or nothing.
-            if (net) {
-                return net.nick || options.nick || '';
-            }
-            return options.nick || '';
         },
     },
 };
